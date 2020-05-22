@@ -1,5 +1,5 @@
 # CommandBotFramework
-The goal of the CommandBotFramework is to make an generic system which can be used to create bots for multiple platforms  while using the same commands. I started this project in order for a few Twitch streamers who also have a Discord community.
+The goal of the CommandBotFramework is to make an generic system which can be used to create bots for multiple platforms  while using the same commands. I started this project in order for a few Twitch streamers, who also have a Discord community, to have consistent commands over their platforms.
 
 ## Setting up the project
 ### Requirements
