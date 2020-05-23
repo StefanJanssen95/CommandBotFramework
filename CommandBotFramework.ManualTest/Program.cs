@@ -1,4 +1,5 @@
 ﻿using System;
+using CommandBotFramework.Calendar;
 
 namespace CommandBotFramework.ManualTest
 {
@@ -7,7 +8,9 @@ namespace CommandBotFramework.ManualTest
         static void Main(string[] args)
         {
             var stop = false;
-            var botManager = new BotManager();;
+            var botManager = new BotManager();
+            var cpm = new CalendarPluginManager(botManager);
+            botManager.Load(cpm);
             
             while (!stop)
             {
@@ -17,9 +20,12 @@ namespace CommandBotFramework.ManualTest
                 {
                     Console.WriteLine(botManager.RunCommand(chatLine));
                 }
-                
-                if (chatLine == "!q")
+
+                if (chatLine == "q" || chatLine == "quit" || chatLine == "exit")
+                {
+                    Console.WriteLine("Shutting down manual test");
                     stop = true;
+                }
             }
         }
     }

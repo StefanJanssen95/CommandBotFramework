@@ -35,7 +35,7 @@ namespace CommandBotFramework.Abstracts
                 help += Environment.NewLine;
             }
 
-            return help;
+            return help.Trim();
         }
 
         private string GetMethodHelp()
@@ -61,6 +61,7 @@ namespace CommandBotFramework.Abstracts
             var help = "";
 
             help += GetBaseHelp();
+            help += Environment.NewLine;
             help += GetMethodHelp();
             
             return help;

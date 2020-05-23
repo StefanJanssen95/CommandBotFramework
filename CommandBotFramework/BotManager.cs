@@ -16,6 +16,15 @@ namespace CommandBotFramework
             _commandPrefix = commandPrefix;
             Register(new HelpCommand(this));
         }
+
+        public bool Load<T>(T pm) where T: PluginManager 
+        { 
+            // LOG: Started loading "pm";
+            var success = pm.Load();
+            // LOG: Failed loading/succesfully loaded "pm"
+
+            return success;
+        }
         
         public bool Register(List<BaseCommand> commands)
         {
@@ -24,11 +33,14 @@ namespace CommandBotFramework
 
         public bool Register(BaseCommand command)
         {
+            // LOG: Trying to register "command.Name"
             if (_registeredCommands.Any(rc => rc.ListensTo(command.Name)))
             {
+                // LOG: Failed registering "command.Name"
                 return false;
             }
             _registeredCommands.Add(command);
+            // LOG: Succesfully loaded "command.Name"
             return true;
         }
 
@@ -69,6 +81,11 @@ namespace CommandBotFramework
         public BaseCommand[] GetRegisteredCommands()
         {
             return _registeredCommands.ToArray();
+        }
+
+        public void Unregister(BaseCommand command)
+        {
+            _registeredCommands.Remove(command);
         }
     }
 }

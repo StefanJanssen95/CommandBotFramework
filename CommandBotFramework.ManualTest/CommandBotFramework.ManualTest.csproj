@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CommandBotFramework.Calendar\CommandBotFramework.Calendar.csproj" />
       <ProjectReference Include="..\CommandBotFramework\CommandBotFramework.csproj" />
     </ItemGroup>
 

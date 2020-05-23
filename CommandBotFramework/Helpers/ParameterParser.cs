@@ -13,7 +13,7 @@ namespace CommandBotFramework.Helpers
                 case ParameterType.Unknown: return value;
                 case ParameterType.Number:
                 {
-                    return value.Contains(".") ? Decimal.Parse(value) : int.Parse(value);
+                    return value.Contains(".") ? (object)decimal.Parse(value) : (object)int.Parse(value);
                 }
                 case ParameterType.Bool:
                 {

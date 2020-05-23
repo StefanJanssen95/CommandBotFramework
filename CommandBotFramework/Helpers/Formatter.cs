@@ -17,7 +17,7 @@ namespace CommandBotFramework.Helpers
                 help += Environment.NewLine;
             }
 
-            return help;
+            return help.Trim();
         }
     }
 }
