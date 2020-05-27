@@ -1,0 +1,37 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Get All Changed Files
+      id: files
+      uses: jitterbit/get-changed-files@v1
+    - name: Run C# Code Analyzer      
+      uses: microsoft/CSharpCodeAnalyzer@v0.1-beta
+      id: runcsharpcodeanalyzer
+      with:
+        binary-path: /home/runner/work/CommandBotFramework/CommandBotFramework/CommandBotFramework.ManualTest/bin/Release/netcoreapp3.1/
+        repository: ${{ github.repository }}
+        report-on-files: ${{ steps.files.outputs.all }}
+    - name: C# Code Analyzer analysis results
+      run: echo "${{ steps.runcsharpcodeanalyzer.outputs.results }}"
