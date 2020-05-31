@@ -10,7 +10,6 @@ namespace CommandBotFramework.ManualTest
             var stop = false;
             var botManager = new BotManager();
             var cpm = new CalendarPluginManager(botManager);
-            botManager.Load(cpm);
             
             while (!stop)
             {
