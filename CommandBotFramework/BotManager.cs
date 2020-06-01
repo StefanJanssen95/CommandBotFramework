@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CommandBotFramework.Abstracts;
@@ -8,30 +9,77 @@ namespace CommandBotFramework
 {
     public class BotManager
     {
-        private List<BaseCommand> _registeredCommands = new List<BaseCommand>();
-        private string _commandPrefix;
+        private readonly List<string> _loadedPlugins = new List<string>();
+        private readonly List<BaseCommand> _registeredCommands = new List<BaseCommand>();
+        private readonly string _commandPrefix;
         
         public BotManager(string commandPrefix = "!")
         {
             _commandPrefix = commandPrefix;
-            Register(new HelpCommand(this));
+            RegisterCommand(new HelpCommand(this));
         }
+        
+        public bool LoadPlugin<T>(T pm) where T: PluginManager
+        {
+            var success = true;
+            var name = pm.PluginName;
+            // LOG: Start loading "name"
+            if (_loadedPlugins.Contains(name))
+            {
+                // LOG: "name" has already been loaded
+            }
+            else
+            {
+                var pluginCommands = pm.GetCommands();
+                
+                // Make sure all commands are valid
+                foreach (var command in pluginCommands)
+                {
+                    if (_registeredCommands.Any(rc => rc.ListensTo(command.Name)))
+                    {
+                        success = false;
+                        // LOG: Duplicate command name "command.Name"
+                    }
+                }
 
-        public bool Load<T>(T pm) where T: PluginManager 
-        { 
-            // LOG: Started loading "pm";
-            var success = pm.Load();
-            // LOG: Failed loading/succesfully loaded "pm"
+                if (success)
+                {
+                    // Register all commands
+                    foreach (var command in pluginCommands)
+                    {
+                        if (!RegisterCommand(command))
+                        {
+                            // This should never happen
+                            throw new Exception($"Validated command '{command.Name}' is not valid anymore");
+                        }
+                    }
+                }
+            }
+
+            if (success)
+            {
+                _loadedPlugins.Add(name);
+                // LOG: succesfully loaded "name"
+            }
+            // else
+            // LOG: Failed loading/ loaded "name"
 
             return success;
         }
-        
-        public bool Register(List<BaseCommand> commands)
+
+        public bool UnloadPlugin<T>(T pm) where T : PluginManager
         {
-            return false;
+            foreach (var command in pm.GetCommands())
+            {
+                UnregisterCommmand(command);
+            }
+            
+            var name = pm.PluginName;
+            _loadedPlugins.Remove(name);
+            return true;
         }
 
-        public bool Register(BaseCommand command)
+        public bool RegisterCommand(BaseCommand command)
         {
             // LOG: Trying to register "command.Name"
             if (_registeredCommands.Any(rc => rc.ListensTo(command.Name)))
@@ -42,6 +90,11 @@ namespace CommandBotFramework
             _registeredCommands.Add(command);
             // LOG: Succesfully loaded "command.Name"
             return true;
+        }
+        
+        public void UnregisterCommmand(BaseCommand command)
+        {
+            _registeredCommands.Remove(command);
         }
 
         public bool IsCommand(string command)
@@ -83,9 +136,9 @@ namespace CommandBotFramework
             return _registeredCommands.ToArray();
         }
 
-        public void Unregister(BaseCommand command)
+        public string[] GetLoadedPlugins()
         {
-            _registeredCommands.Remove(command);
+            return _loadedPlugins.ToArray();
         }
     }
 }
